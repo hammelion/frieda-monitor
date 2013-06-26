@@ -1,6 +1,6 @@
 package com.mstsoft.frieda.server;
 
-import com.mstsoft.frieda.server.animations.IdentifyAnimation;
+import com.mstsoft.frieda.server.animations.*;
 import com.mstsoft.frieda.server.lightstrategies.*;
 import com.mstsoft.frieda.server.lightstrategies.FadeStrategy;
 import com.mstsoft.frieda.server.lightstrategies.BlinkStrategy;
@@ -26,9 +26,18 @@ public class LightManager {
             BlinkStrategy.class
     };
 
+    private static Class[] animationClasses = new Class[] {
+            AlertTopAnimation.class,
+            HarlemShakeAnimation.class,
+            IdentifyAnimation.class,
+            KnightRiderAnimation.class,
+            SnakeAnimation.class
+    };
+
     private LEDPhidget led;
     private MappedLEDPhidget ledMapper;
 
+    private List<LightAnimation> animations = new ArrayList<LightAnimation>();
     private List<LightStrategy> strategies = new ArrayList<LightStrategy>();
 
     private int[] currentStatus = new int[64];
@@ -43,6 +52,14 @@ public class LightManager {
         for (Class c : strategyClasses) {
             try {
                 strategies.add((LightStrategy) c.newInstance());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        for (Class c : animationClasses) {
+            try {
+                animations.add((LightAnimation) c.newInstance());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -151,13 +168,22 @@ public class LightManager {
     }
 
     public void setAnimation(String name) {
-        currentAnimation = new IdentifyAnimation();
+        currentAnimation = lookupAnimation(name);
     }
 
     private LightStrategy lookupStrategy(String name) {
         for (LightStrategy strategy : strategies) {
             if (strategy.getName().equals(name)) {
                 return strategy;
+            }
+        }
+        throw new RuntimeException("strategy not found: " + name);
+    }
+
+    private LightAnimation lookupAnimation(String name) {
+        for (LightAnimation ani : animations) {
+            if (ani.getName().equals(name)) {
+                return ani;
             }
         }
         throw new RuntimeException("strategy not found: " + name);

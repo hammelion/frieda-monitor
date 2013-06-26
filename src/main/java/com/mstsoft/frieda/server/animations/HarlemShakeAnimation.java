@@ -11,7 +11,6 @@ import com.mstsoft.frieda.server.MappedLEDPhidget;
  */
 public class HarlemShakeAnimation implements LightAnimation {
 
-
     @Override
     public String getName() {
         return "harlemshake";
