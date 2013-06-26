@@ -31,7 +31,8 @@ public class LightManager {
             HarlemShakeAnimation.class,
             IdentifyAnimation.class,
             KnightRiderAnimation.class,
-            SnakeAnimation.class
+            SnakeAnimation.class,
+            SlotMachineAnimation.class
     };
 
     private LEDPhidget led;
@@ -82,6 +83,9 @@ public class LightManager {
                             LightAnimation local  = currentAnimation;
                             currentAnimation = null;
                             local.run(ledMapper);
+                            for (int i = 0; i < 64; i++) {
+                                currentStatus[i] = 0;
+                            }
                         }
                         tick();
                         sleep(100);
